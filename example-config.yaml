@@ -1,0 +1,35 @@
+tests:
+  - name: check-oom
+    description: Check Log for OutOfMemoryError
+    regex:
+      - "OutOfMemoryError"
+  - name: check-health-endpoint
+    description: Check Health Endpoint
+    httpGet:
+      httpHeaders:
+        - name: Host
+          value: test.de
+      path: /info
+      port: 8080
+      scheme: HTTP
+      sync: false
+
+
+
+readinessProbe2:
+  - name: Check for out-of-memory
+    container: main
+    performTests:
+      - check-oom
+    successThreshold: 3
+    failureThreshold: 1
+    timespan: 10m
+
+livenessProbe:
+  - name: Check for out-of-memory
+    container: main
+    performTests:
+      - check-oom
+    successThreshold: 3
+    failureThreshold: 1
+    timespan: 10m
