@@ -9,7 +9,7 @@ matrix:
       env: GO111MODULE=on
 
 install:
-  - go get -u
+  - go get ./...
 script:
   - go test ./...
   - go build ./cmd/kubeprober
