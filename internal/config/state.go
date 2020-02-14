@@ -87,6 +87,8 @@ func NewKubeprober(configFile string) (*KubeproberState, error) {
 		return nil, err
 	}
 
+
+
 	return &KubeproberState{
 		Config:           config,
 		Kubernetes:       kubernetesClient,
