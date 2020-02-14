@@ -5,12 +5,11 @@ import (
 	"github.com/gin-gonic/gin"
 	"io/ioutil"
 	v1 "k8s.io/api/core/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
 	"os"
 	"sync"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"sync/atomic"
 )
 
 type TerminationChannel chan bool
