@@ -1,20 +1,25 @@
 package main
 
 import (
-	"fmt"
-	config2 "github.com/lukeelten/kubeprober/internal/config"
+	"github.com/lukeelten/kubeprober/internal/config"
+	"log"
+	"net/http"
+	"time"
 )
 
 func main() {
-	config, err := config2.LoadConfiguration("example-config.yaml")
+	kubeprober, err := config.NewKubeprober("example-config.yaml")
+
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
 
-	err = config.Validate()
-	if err != nil {
-		panic(err)
+	err = kubeprober.Run()
+	if err != http.ErrServerClosed {
+		kubeprober.Shutdown() // Send signal to running goroutines
+		log.Fatalf("Received error: %v", err)
 	}
 
-	fmt.Printf("%v", *config.LivenessProbe[0].Timespan)
+	// Wait for all go routines to terminate
+	time.Sleep(50  * time.Millisecond)
 }

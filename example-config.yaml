@@ -1,3 +1,5 @@
+port: 8081
+
 tests:
   - name: check-oom
     description: Check Log for OutOfMemoryError
@@ -14,8 +16,6 @@ tests:
       scheme: HTTP
       sync: false
 
-
-
 readinessProbe2:
   - name: Check for out-of-memory
     container: main
@@ -24,6 +24,7 @@ readinessProbe2:
     successThreshold: 3
     failureThreshold: 1
     timespan: 10m
+    periodSeconds: 10
 
 livenessProbe:
   - name: Check for out-of-memory
@@ -33,3 +34,4 @@ livenessProbe:
     successThreshold: 3
     failureThreshold: 1
     timespan: 10m
+    periodSeconds: 20
