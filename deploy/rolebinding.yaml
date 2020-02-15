@@ -1,0 +1,11 @@
+apiVersion: authorization.openshift.io/v1
+kind: RoleBinding
+metadata:
+  name: kubeprober
+  labels:
+    app: kubeprober
+roleRef:
+  name: kubeprober
+subjects:
+  - kind: ServiceAccount
+    name: kubeprober

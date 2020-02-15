@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/lukeelten/kubeprober/internal/config"
+	"github.com/lukeelten/kubeprober/internal/runtime"
 	"log"
 	"net/http"
 	"time"
@@ -14,7 +15,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	err = kubeprober.Run()
+	err = runtime.Run(kubeprober)
 	if err != http.ErrServerClosed {
 		kubeprober.Shutdown() // Send signal to running goroutines
 		log.Fatalf("Received error: %v", err)

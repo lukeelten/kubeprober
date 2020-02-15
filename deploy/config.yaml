@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kubeprober-config
+  labels:
+    app: kubeprober
+data:
+  kubeprober.yaml: |
+

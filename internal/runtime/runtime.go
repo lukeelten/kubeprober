@@ -1,9 +1,10 @@
-package config
+package runtime
 
 import (
 	"errors"
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/lukeelten/kubeprober/internal/config"
 	"log"
 	"net/http"
 	"os"
@@ -11,13 +12,11 @@ import (
 	"syscall"
 )
 
-func (state *KubeproberState) Run() error {
-	signalChannel := make(chan os.Signal, 1)
-	signal.Notify(signalChannel, syscall.SIGINT, syscall.SIGTERM, syscall.SIGHUP)
-	go terminateOnSyscall(signalChannel, state)
+func Run(state *config.KubeproberState) error {
+	go shutdownOnSyscall(state)
 	go listenErrorChannel(state)
 
-	err := state.SetupTasks()
+	err := SetupTasks(state)
 	if err != nil {
 		return err
 	}
@@ -83,13 +82,15 @@ func (state *KubeproberState) Run() error {
 }
 
 
-func terminateOnSyscall(signalChannel chan os.Signal, state *KubeproberState) {
+func shutdownOnSyscall(state *config.KubeproberState) {
+	signalChannel := make(chan os.Signal, 1)
+	signal.Notify(signalChannel, syscall.SIGINT, syscall.SIGTERM, syscall.SIGHUP)
 	sig := <-signalChannel
 	log.Printf("Received signal: %v", sig)
 	state.Shutdown()
 }
 
-func listenErrorChannel(state *KubeproberState) {
+func listenErrorChannel(state *config.KubeproberState) {
 	termChannel := state.CreateTerminationChannel()
 
 	for {
@@ -102,7 +103,7 @@ func listenErrorChannel(state *KubeproberState) {
 	}
 }
 
-func createServer(state *KubeproberState) *http.Server {
+func createServer(state *config.KubeproberState) *http.Server {
 	server := &http.Server{
 		Addr:    fmt.Sprintf(":%d", state.Config.Port),
 		Handler: state.Engine,

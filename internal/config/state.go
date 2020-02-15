@@ -10,6 +10,7 @@ import (
 	"k8s.io/client-go/rest"
 	"os"
 	"sync"
+	"time"
 )
 
 type TerminationChannel chan bool
@@ -39,12 +40,15 @@ type KubeproberState struct {
 type ContainerStatus struct {
 	Checkable
 
-	ReadinessMutex *sync.RWMutex
-	LivenessMutex *sync.RWMutex
-
 	Name string
-	Liveness bool
-	Readiness bool
+	Liveness CheckStatus
+	Readiness CheckStatus
+}
+
+type CheckStatus struct {
+	Lock sync.RWMutex
+	Status bool
+	LastCheck time.Time
 }
 
 func NewKubeprober(configFile string) (*KubeproberState, error) {
@@ -140,15 +144,15 @@ func (state *KubeproberState) IsReady() bool {
 }
 
 func (container *ContainerStatus) IsAlive() bool {
-	container.LivenessMutex.RLock()
-	defer container.LivenessMutex.RUnlock()
-	return container.Liveness
+	container.Liveness.Lock.RLock()
+	defer container.Liveness.Lock.RUnlock()
+	return container.Liveness.Status
 }
 
 func (container *ContainerStatus) IsReady() bool {
-	container.ReadinessMutex.RLock()
-	defer container.ReadinessMutex.RUnlock()
-	return container.Liveness
+	container.Readiness.Lock.RLock()
+	defer container.Readiness.Lock.RUnlock()
+	return container.Readiness.Status
 }
 
 func getNamespace() string {

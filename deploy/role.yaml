@@ -1,0 +1,15 @@
+apiVersion: authorization.openshift.io/v1
+kind: Role
+metadata:
+  name: kubeprober-role
+  labels:
+    app: kubeprober
+rules:
+  - apiGroups:
+      - "v1"
+    resources:
+      - pods
+      - pods/log
+    verbs:
+      - get
+      - watch

@@ -4,12 +4,12 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"gopkg.in/yaml.v2"
 	"io/ioutil"
 	"os"
 	"regexp"
 	"sort"
 	"strings"
-	"gopkg.in/yaml.v2"
 )
 
 func LoadConfiguration(path string) (*KubeproberConfig, error) {
@@ -57,10 +57,14 @@ func (config *KubeproberConfig) Validate() error {
 			return err
 		}
 
-		availableTests = append(availableTests, test.Name)
+		if i := sort.SearchStrings(availableTests, test.Name); i == len(availableTests) {
+			availableTests = append(availableTests, test.Name)
+			sort.Strings(availableTests)
+		} else {
+			return fmt.Errorf("invalid test '%s': test already exists", test.Name)
+		}
 	}
 
-	sort.Strings(availableTests)
 	for _, probe := range append(config.LivenessProbe, config.ReadinessProbe...) {
 		err := probe.Validate()
 		if err != nil {

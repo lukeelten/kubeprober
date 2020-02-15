@@ -1,14 +1,10 @@
 package config
 
-import (
-	"time"
-)
-
 type KubeproberConfig struct {
 	Port int `json:"port" yaml:"port"`
 	Tests []TestConfig `json:"tests" yaml:"tests"`
-	ReadinessProbe []ProbeConfig `json:"readinessProbe" yaml:"readinessProbe"`
-	LivenessProbe []ProbeConfig `json:"livenessProbe" yaml:"livenessProbe"`
+	ReadinessProbe []ProbeConfig `json:"readinessProbes" yaml:"readinessProbes"`
+	LivenessProbe []ProbeConfig `json:"livenessProbes" yaml:"livenessProbes"`
 }
 
 type ProbeConfig struct {
@@ -19,7 +15,6 @@ type ProbeConfig struct {
 	SuccessThreshold *int `json:"successThreshold" yaml:"successThreshold"`
 	FailureThreshold *int `json:"failureThreshold" yaml:"failureThreshold"`
 	InitialDelaySeconds *int `json:"initialDelay" yaml:"initialDelay"`
-	Timespan *time.Duration `json:"timespan" yaml:"timespan"`
 	PeriodSeconds int `json:"periodSeconds" yaml:"periodSeconds"`
 }
 

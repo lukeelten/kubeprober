@@ -16,22 +16,20 @@ tests:
       scheme: HTTP
       sync: false
 
-readinessProbe2:
+readinessProbes:
   - name: Check for out-of-memory
     container: main
     performTests:
       - check-oom
-    successThreshold: 3
-    failureThreshold: 1
-    timespan: 10m
+    successThreshold: 1
+    failureThreshold: 3
     periodSeconds: 10
 
-livenessProbe:
+livenessProbes:
   - name: Check for out-of-memory
     container: main
     performTests:
       - check-oom
-    successThreshold: 3
-    failureThreshold: 1
-    timespan: 10m
+    successThreshold: 1
+    failureThreshold: 3
     periodSeconds: 20
