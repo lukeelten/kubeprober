@@ -155,6 +155,18 @@ func (container *ContainerStatus) IsReady() bool {
 	return container.Readiness.Status
 }
 
+func (container *ContainerStatus) SetAlive(alive bool) {
+	container.Liveness.Lock.Lock()
+	defer container.Liveness.Lock.Unlock()
+	container.Liveness.Status = alive
+}
+
+func (container *ContainerStatus) SetReady(ready bool) {
+	container.Readiness.Lock.Lock()
+	defer container.Readiness.Lock.Unlock()
+	container.Readiness.Status = ready
+}
+
 func getNamespace() string {
 	namespaceFile := "/var/run/secrets/kubernetes.io/serviceaccount/namespace"
 	if _, err := os.Stat(namespaceFile); err == nil {

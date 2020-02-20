@@ -3,10 +3,11 @@ package probes
 import (
 	"errors"
 	"github.com/lukeelten/kubeprober/internal/config"
+	"time"
 )
 
 type Probe interface {
-	Test(container *config.ContainerStatus) bool
+	Test(container *config.ContainerStatus, lastCheck time.Time) bool
 }
 
 func CreateProbe(state *config.KubeproberState, test *config.TestConfig) (Probe, error) {

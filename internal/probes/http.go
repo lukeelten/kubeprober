@@ -47,7 +47,7 @@ func createHttpProbe(state *config.KubeproberState, test *config.TestConfig) (*H
 	return testInstance, nil
 }
 
-func (h *HttpProbe) Test(container *config.ContainerStatus) bool {
+func (h *HttpProbe) Test(container *config.ContainerStatus, lastCheck time.Time) bool {
 	ctx := context.Background()
 	request := h.request.Clone(ctx)
 	response, err := h. client.Do(request)

@@ -33,13 +33,10 @@ func createRegexProbe(state *config.KubeproberState, test *config.TestConfig) (*
 	return testInstance, nil
 }
 
-func (test *RegexProbe) Test(container *config.ContainerStatus) bool {
-	since := time.Now()
-	// @todo
-
+func (test *RegexProbe) Test(container *config.ContainerStatus, lastCheck time.Time) bool {
 	options := &v1.PodLogOptions{
 		Container: container.Name,
-		SinceTime: &metav1.Time{since},
+		SinceTime: &metav1.Time{lastCheck},
 	}
 	req := test.state.Kubernetes.CoreV1().Pods(test.state.Pod.Namespace).GetLogs(test.state.Pod.Name, options)
 
