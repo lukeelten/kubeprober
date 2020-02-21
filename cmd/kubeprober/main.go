@@ -5,11 +5,17 @@ import (
 	"github.com/lukeelten/kubeprober/internal/runtime"
 	"log"
 	"net/http"
+	"os"
 	"time"
 )
 
 func main() {
-	kubeprober, err := config.NewKubeprober("example-config.yaml")
+	var configFile string = "example-config.yaml"
+	if len(os.Args) >= 2 {
+		configFile = os.Args[1]
+	}
+
+	kubeprober, err := config.NewKubeprober(configFile)
 
 	if err != nil {
 		log.Fatal(err)
