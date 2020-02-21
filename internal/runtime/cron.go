@@ -5,6 +5,7 @@ import (
 	"github.com/lukeelten/kubeprober/internal/config"
 	"github.com/lukeelten/kubeprober/internal/cron"
 	"github.com/lukeelten/kubeprober/internal/probes"
+	"log"
 	"sync"
 	"time"
 )
@@ -88,6 +89,7 @@ func makeLivenessFunc(container *config.ContainerStatus, test probes.Probe) cron
 	return func(lastCall time.Time) {
 		result := test.Test(container, lastCall)
 		container.SetAlive(result)
+		log.Printf("Container %s is alive %v", container.Name, result)
 	}
 }
 
@@ -95,5 +97,6 @@ func makeReadinessFunc(container *config.ContainerStatus, test probes.Probe) cro
 	return func(lastCall time.Time) {
 		result := test.Test(container, lastCall)
 		container.SetReady(result)
+		log.Printf("Container %s is ready %v", container.Name, result)
 	}
 }

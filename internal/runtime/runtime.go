@@ -77,7 +77,6 @@ func Run(state *config.KubeproberState) error {
 		}
 	})
 
-
 	return createServer(state).ListenAndServe()
 }
 
