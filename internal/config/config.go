@@ -8,7 +8,6 @@ import (
 	"io/ioutil"
 	"os"
 	"regexp"
-	"sort"
 	"strings"
 )
 
@@ -49,17 +48,16 @@ func (config *KubeproberConfig) Validate() error {
 	if len(config.Tests) == 0 {
 		return errors.New("invalid configuration: no tests defined")
 	}
-
-	availableTests := make([]string, len(config.Tests))
+	
+	availableTests := make([]string, 0)
 	for _, test := range config.Tests {
 		err := test.Validate()
 		if err != nil {
 			return err
 		}
 
-		if i := sort.SearchStrings(availableTests, test.Name); i == len(availableTests) {
+		if !ValueExists(availableTests, test.Name) {
 			availableTests = append(availableTests, test.Name)
-			sort.Strings(availableTests)
 		} else {
 			return fmt.Errorf("invalid test '%s': test already exists", test.Name)
 		}
@@ -71,9 +69,8 @@ func (config *KubeproberConfig) Validate() error {
 			return err
 		}
 
-		numTests := len(availableTests)
 		for _, test := range probe.PerformTests {
-			if i := sort.SearchStrings(availableTests, test); i == numTests {
+			if !ValueExists(availableTests, test) {
 				return fmt.Errorf("invalid probe '%s': test '%s' not found", probe.GetName(), test)
 			}
 		}
@@ -143,4 +140,14 @@ func (probe *ProbeConfig) Validate() error {
 	}
 
 	return nil
+}
+
+func ValueExists(arr []string, search string) bool {
+	for _, element := range arr {
+		if element == search {
+			return true
+		}
+	}
+
+	return false
 }
